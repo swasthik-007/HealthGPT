@@ -21,7 +21,7 @@ export default function HistoryPage() {
     console.log("Insert Error:", error);
   };
 
-  const [reports, setReports] = useState([]);
+  const [reports, setReports] = useState<any[]>([]);
 
   useEffect(() => {
     if (!isLoaded || !user) return;
