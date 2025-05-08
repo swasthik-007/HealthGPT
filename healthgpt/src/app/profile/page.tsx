@@ -1,7 +1,8 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server"; // ✅ correct import for app directory
 
-export default function ProfilePage() {
-  const { userId } = auth();
+
+export default async function ProfilePage() {
+  const { userId } = await auth();
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
       <h2 className="text-2xl font-semibold mb-2">🙍 Your Profile</h2>
