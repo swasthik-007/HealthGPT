@@ -3,133 +3,154 @@
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import ThemeToggle from "./ThemeToggle";
-import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import "../styles/globals.css"; // Ensure global styles are imported
+import { ScanHeart } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="w-full border-b border-border bg-gradient-to-r from-emerald-50 via-white to-emerald-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 shadow-sm">
-      <div className="max-w-7xl mx-auto px-6 py-5">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="text-2xl font-extrabold tracking-tight text-emerald-600 dark:text-emerald-400 flex items-center gap-3 hover:opacity-90 transition-opacity"
-          >
-            <span className="text-3xl">🩺 HealthGPT</span>
-            {/* <span className="bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 text-transparent bg-clip-text">
+    <header className="w-full bg-black py-4 px-6">
+      <div className="max-w-7xl mx-auto flex justify-between items-center h-12">
+        {/* Logo - left side */}
+        <div className="flex items-center">
+          <Link href="/" className="flex items-center gap-3">
+            <span className="text-purple-500 text-2xl">🩺</span>
+            <span className="text-white text-xl font-bold tracking-wide">
               HealthGPT
-            </span> */}
+            </span>
           </Link>
+        </div>
 
+        {/* Empty space in the middle */}
+        <div className="flex-grow"></div>
+
+        {/* Controls - right side with lots of spacing */}
+        <div className="flex items-center gap-[8]">
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+          {/* <nav className="hidden md:flex items-center gap-[8]">
             <Link
               href="/report"
-              className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400 transition-colors py-2"
+              className="text-gray-300 hover:text-white transition-colors"
             >
-              <span className="text-lg">📤</span> Upload
+              Upload
             </Link>
             <Link
               href="/chat"
-              className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400 transition-colors py-2"
+              className="text-gray-300 hover:text-white transition-colors"
             >
-              <span className="text-lg">💬</span> Chat
+              Chat
             </Link>
             <Link
               href="/history"
-              className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400 transition-colors py-2"
+              className="text-gray-300 hover:text-white transition-colors"
             >
-              <span className="text-lg">📊</span> Trends
+              Trends
             </Link>
-            <Link
-              href="/faq"
-              className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400 transition-colors py-2"
-            >
-              <span className="text-lg">❓</span> FAQ
+          </nav> */}
+
+          {/* Theme toggle with good spacing */}
+          <div className="flex items-center">
+            <Link href="/image-analyzer" className="flex items-center gap-3">
+              {/* <span className="text-purple-500 text-2xl">🩺</span>
+            <span className="text-white text-xl font-bold tracking-wide">
+              HealthGPT
+            </span> */}
+              <ScanHeart />
             </Link>
-
-            {/* Theme toggle */}
-            <div className="ml-2">
-              <ThemeToggle />
-            </div>
-
-            {/* Auth buttons */}
-            <SignedIn>
-              <div className="ml-2">
-                <UserButton afterSignOutUrl="/" />
-              </div>
-            </SignedIn>
-            <SignedOut>
-              <Link
-                href="/sign-in"
-                className="ml-2 px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-full hover:shadow-md hover:from-emerald-700 hover:to-teal-600 transition-all text-sm font-medium"
-              >
-                🔐 Login
-              </Link>
-            </SignedOut>
-          </nav>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center gap-4">
+          </div>
+          <div className="ml-4">
             <ThemeToggle />
+          </div>
+
+          {/* Auth with good spacing */}
+          <div className="ml-4 mr-[8]">
             <SignedIn>
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
+            <SignedOut>
+              <Link
+                href="/sign-in"
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-md text-white"
+              >
+                Login
+              </Link>
+            </SignedOut>
+          </div>
+
+          {/* Mobile menu button */}
+          {/* <div className="md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-gray-600 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400"
+              className="text-gray-300 hover:text-white p-2"
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                {mobileMenuOpen ? (
+                  <>
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </>
+                ) : (
+                  <>
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                  </>
+                )}
+              </svg>
             </button>
-          </div>
+          </div> */}
         </div>
+      </div>
 
-        {/* Mobile Navigation Menu */}
-        {mobileMenuOpen && (
-          <nav className="md:hidden pt-4 pb-2 flex flex-col gap-3 text-sm font-medium border-t border-gray-100 dark:border-gray-800 mt-4">
+      {/* Mobile Navigation Menu */}
+      {/* {mobileMenuOpen && (
+        <div className="md:hidden mt-4 py-4 border-t border-gray-800">
+          <nav className="flex flex-col gap-6 px-4">
             <Link
               href="/report"
-              className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400 transition-colors py-2"
+              className="text-gray-300 hover:text-white transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span className="text-lg">📤</span> Upload
+              Upload
             </Link>
             <Link
               href="/chat"
-              className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400 transition-colors py-2"
+              className="text-gray-300 hover:text-white transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span className="text-lg">💬</span> Chat
+              Chat
             </Link>
             <Link
               href="/history"
-              className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400 transition-colors py-2"
+              className="text-gray-300 hover:text-white transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span className="text-lg">📊</span> Trends
-            </Link>
-            <Link
-              href="/faq"
-              className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400 transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <span className="text-lg">❓</span> FAQ
+              Trends
             </Link>
             <SignedOut>
               <Link
                 href="/sign-in"
-                className="mt-2 px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-full hover:shadow-md hover:from-emerald-700 hover:to-teal-600 transition-all text-sm font-medium w-full text-center"
+                className="mt-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-md text-white text-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                🔐 Login
+                Login
               </Link>
             </SignedOut>
           </nav>
-        )}
-      </div>
+        </div>
+      )} */}
     </header>
   );
 }

@@ -77,14 +77,14 @@ export default function ReportPage() {
       formData.append("file", file);
 
       // 1. Upload file to extract text
-      const uploadRes = await fetch("http://localhost:8000/report/upload", {
+      const uploadRes = await fetch("https://healthgpt-2.onrender.com/report/upload", {
         method: "POST",
         body: formData,
       });
       const { text } = await uploadRes.json();
 
       // 2. Analyze extracted text
-      const analyzeRes = await fetch("http://localhost:8000/analyze", {
+      const analyzeRes = await fetch("https://healthgpt-2.onrender.com/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
@@ -96,7 +96,7 @@ export default function ReportPage() {
       await saveReportToSupabase(analyzed);
 
       // 4. ?Send to Gmail - Optional, can be removed if causing delay
-      await fetch("http://localhost:8000/send-email", {
+      await fetch("https://healthgpt-2.onrender.com/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -141,7 +141,7 @@ export default function ReportPage() {
         warnings: analyzedData.warnings || [],
       };
 
-      const response = await fetch("http://localhost:8000/chat/report", {
+      const response = await fetch("https://healthgpt-2.onrender.com/chat/report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

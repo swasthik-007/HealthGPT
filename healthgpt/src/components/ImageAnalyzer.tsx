@@ -45,7 +45,7 @@ export default function ImageAnalyzer() {
 
     try {
       console.log("Sending request to analyze image...");
-      const res = await fetch("http://localhost:8000/vision/analyze", {
+      const res = await fetch("https://healthgpt-2.onrender.com/vision/analyze", {
         method: "POST",
         body: formData,
       });

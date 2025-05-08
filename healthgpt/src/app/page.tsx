@@ -1,40 +1,47 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { useUser } from "@clerk/nextjs";
 
 export default function HomePage() {
   const { user, isLoaded } = useUser();
-  console.log("clerk", user?.id);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted flex flex-col items-center justify-center px-4">
-      <Card className="w-full max-w-xl bg-card shadow-xl border rounded-2xl">
-        <CardContent className="p-8 text-center">
-          <h1 className="text-4xl font-bold mb-3">🩺 HealthGPT</h1>
-          <p className="text-muted-foreground mb-6 text-sm">
+      <div className="bg-black/20 backdrop-blur-sm p-10 rounded-xl w-96 h-96 shadow-2xl flex flex-col">
+        <div className="flex justify-center mb-6">
+          <div className="text-primary text-4xl font-bold flex items-center gap-2">
+            <span className="text-purple-500">🩺</span> HealthGPT
+          </div>
+        </div>
+
+        <div className="text-center mb-auto">
+          <p className="text-gray-300 text-sm">
             Your AI companion to understand medical reports, symptoms, and
             health trends — explained in simple terms.
           </p>
+        </div>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/report">
-              <Button className="px-6 py-2 w-full sm:w-auto">
-                Upload Report
-              </Button>
-            </Link>
-            <Link href="/chat">
-              <Button variant="outline" className="px-6 py-2 w-full sm:w-auto">
-                Symptom Checker
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="grid grid-cols-2 gap-4 w-full">
+          <Link href="/report" className="w-full">
+            <Button className="w-full h-16" variant="default">
+              Upload Report
+            </Button>
+          </Link>
+          <Link href="/chat" className="w-full">
+            <Button variant="outline" className="w-full h-16">
+              Symptom Checker
+            </Button>
+          </Link>
+        </div>
 
-      <p className="text-xs text-muted-foreground mt-8">
-        Trusted by users. Designed for peace of mind.
-      </p>
+        <div className="mt-6 text-center">
+          <p className="text-xs text-gray-400">
+            Trusted by users. Designed for peace of mind.
+          </p>
+        </div>
+      </div>
     </main>
   );
 }

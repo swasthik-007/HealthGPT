@@ -16,7 +16,7 @@ export default function ChatPage() {
     setLoading(true);
     setReply("");
 
-    const res = await fetch("http://localhost:8000/chat", {
+    const res = await fetch("https://healthgpt-2.onrender.com/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: input }),

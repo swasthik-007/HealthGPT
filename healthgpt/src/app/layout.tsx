@@ -26,7 +26,7 @@ export default function RootLayout({
             <body className={inter.className}>
               <Header />
               <main className="h-screen">{children}</main>
-              <Footer />
+              {/* <Footer /> */}
             </body>
           </html>
         </AuthSyncWrapper>
