@@ -1,12 +1,10 @@
 import "@/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { Inter } from "next/font/google";
+// import Footer from "@/components/Footer";
+// import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import AuthSyncWrapper from "@/components/AuthSyncWrapper";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "HealthGPT",
@@ -23,10 +21,10 @@ export default function RootLayout({
       <ClerkProvider>
         <AuthSyncWrapper>
           <html lang="en">
-            <body className={inter.className}>
+            <body className="font-sans">
               <Header />
               <main className="h-screen">{children}</main>
-              {/* <Footer /> */}
+              {/* <Footer />sa */}
             </body>
           </html>
         </AuthSyncWrapper>
