@@ -22,8 +22,7 @@ export const DownloadButton = ({ reportData }: DownloadButtonProps) => {
     console.log("Sending report_data:", reportData);
 
     try {
-      const response = await fetch("https://healthgpt-2.onrender.com
-/report/download", {
+      const response = await fetch("https://healthgpt-2.onrender.com/report/download", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ report_data: reportData }),
