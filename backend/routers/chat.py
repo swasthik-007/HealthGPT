@@ -4,7 +4,7 @@ import os
 import google.generativeai as genai
 from typing import List, Dict, Any, Optional
 import asyncio
-import re
+
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 router = APIRouter()
@@ -61,22 +61,39 @@ async def chat_about_report(request: ReportChatRequest, background_tasks: Backgr
         
         # Generate response with optimized parameters
         prompt = f"""
-        You are HealthGPT, a friendly and professional AI medical assistant.
+You are HealthGPT, a friendly and professional AI medical assistant.
 
-        Context:
-        {system_prompt}
+Context:
+{system_prompt}
 
-        The user has asked: "{request.message}"
+The user has asked: "{request.message}"
 
-        Respond using valid HTML format:
-        - Use <h3> for sections like "Possible Cause", "Suggestions", "When to See a Doctor".
-        - Wrap each advice line in <p>.
-        - Add emojis for empathy and clarity (😊 🧠 ❤️ 🚨).
-        - Use <strong> to highlight important keywords or warnings.
-        - No markdown or stars (like ** or *).
-        - Avoid disclaimers or restating the user input.
-        - Keep it clear, helpful, and human-friendly.
-        """
+Your response should be:
+- Structured clearly using short headings or line breaks.
+- Empathetic and friendly in tone.
+- Use emojis for clarity and emotional support (e.g., 😊, 🧠, ❤️).
+- Important medical terms or advice should be written in **bold** (no asterisks or markdown).
+- Do NOT use stars, asterisks, or bullet points.
+- Avoid complex medical jargon; use simple language.
+- Avoid disclaimers or unnecessary explanations.
+- Avoid repeating the user's question or context.
+-use emotes and numbering and bold 
+- Use new lines to separate sections.
+- Keep it to the point and easy to understand for a non-medical user.
+
+Example format:
+
+Possible Cause:
+[Text]
+
+Suggested Advice:
+[Text with emojis]
+
+When to See a Doctor:
+[Text with bold terms and warning emojis if needed]
+
+Now answer the user's question in this format.
+"""
 
         
         # Set generation parameters for faster response
@@ -93,14 +110,7 @@ async def chat_about_report(request: ReportChatRequest, background_tasks: Backgr
         )
         
         # Format the response to keep only the relevant content
-
         response_text = response.text.strip()
-
-        # Clean up common markdown artifacts
-        response_text = re.sub(r'\*\*(.*?)\*\*', r'\1', response_text)  # remove bold **
-        response_text = re.sub(r'\*(.*?)\*', r'\1', response_text)      # remove italic *
-        response_text = re.sub(r'^\s*[-*]\s+', '', response_text, flags=re.MULTILINE)  # remove bullet marks
-        response_text = re.sub(r'\n{2,}', '\n\n', response_text)        # reduce multiple blank lines
         
         # Remove any system instruction portions if they appear in the response
         if "User question:" in response_text:
