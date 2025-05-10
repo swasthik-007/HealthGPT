@@ -29,9 +29,28 @@ export default function ChatPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fade-in {
+          animation: fadeIn 0.5s ease-out;
+        }
+      `}</style>
+
       <Card>
         <CardHeader>
-          <CardTitle>💬 Ask AI About Your Symptoms</CardTitle>
+          <CardTitle className="h-[60px] text-[40px] text-center">
+            💬 Ask AI About Your Symptoms
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Textarea
@@ -39,13 +58,23 @@ export default function ChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={4}
+            className="text-center text-[20px]"
           />
-          <Button onClick={handleAsk} disabled={loading}>
+          <Button
+            onClick={handleAsk}
+            disabled={loading}
+            className="text-center text-[20px] w-full h-[40px]"
+          >
             {loading ? "Thinking..." : "Ask AI"}
           </Button>
+
           {reply && (
-            <div className="bg-muted p-4 rounded-lg text-sm whitespace-pre-wrap">
-              {reply}
+            <div className="bg-[#f8fafc] dark:bg-[#1e293b] p-6 rounded-xl text-base leading-relaxed shadow-sm border border-gray-200 dark:border-gray-700 animate-fade-in">
+              {reply.split("\n").map((line, idx) => (
+                <p key={idx} className="mb-2">
+                  {line}
+                </p>
+              ))}
             </div>
           )}
         </CardContent>

@@ -4,7 +4,7 @@ import os
 import google.generativeai as genai
 from typing import List, Dict, Any, Optional
 import asyncio
-
+import re
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 router = APIRouter()
@@ -60,14 +60,24 @@ async def chat_about_report(request: ReportChatRequest, background_tasks: Backgr
                 system_prompt += f" Warnings: {', '.join(request.report_data['warnings'][:2])}"
         
         # Generate response with optimized parameters
-        prompt = f"""{system_prompt}\n\nUser question: {request.message}
-        answer in a well structured format. Include:
-        and be to the point.
-        give emojies in the response.
-        give line breaks in the response.
-        remove stars and dots from the response.
-        give important information in bold and italic.
+        prompt = f"""
+        You are HealthGPT, a friendly and professional AI medical assistant.
+
+        Context:
+        {system_prompt}
+
+        The user has asked: "{request.message}"
+
+        Respond using valid HTML format:
+        - Use <h3> for sections like "Possible Cause", "Suggestions", "When to See a Doctor".
+        - Wrap each advice line in <p>.
+        - Add emojis for empathy and clarity (😊 🧠 ❤️ 🚨).
+        - Use <strong> to highlight important keywords or warnings.
+        - No markdown or stars (like ** or *).
+        - Avoid disclaimers or restating the user input.
+        - Keep it clear, helpful, and human-friendly.
         """
+
         
         # Set generation parameters for faster response
         generation_config = {
@@ -83,7 +93,14 @@ async def chat_about_report(request: ReportChatRequest, background_tasks: Backgr
         )
         
         # Format the response to keep only the relevant content
+
         response_text = response.text.strip()
+
+        # Clean up common markdown artifacts
+        response_text = re.sub(r'\*\*(.*?)\*\*', r'\1', response_text)  # remove bold **
+        response_text = re.sub(r'\*(.*?)\*', r'\1', response_text)      # remove italic *
+        response_text = re.sub(r'^\s*[-*]\s+', '', response_text, flags=re.MULTILINE)  # remove bullet marks
+        response_text = re.sub(r'\n{2,}', '\n\n', response_text)        # reduce multiple blank lines
         
         # Remove any system instruction portions if they appear in the response
         if "User question:" in response_text:

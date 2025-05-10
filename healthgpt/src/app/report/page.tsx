@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { DownloadButton } from "@/components/DownloadButton";
 import { supabase } from "@/lib/subabaseClient";
+import { Send } from "lucide-react";
 
 export default function ReportPage() {
   // Add animation keyframes
@@ -77,18 +78,24 @@ export default function ReportPage() {
       formData.append("file", file);
 
       // 1. Upload file to extract text
-      const uploadRes = await fetch("https://healthgpt-2.onrender.com/report/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const uploadRes = await fetch(
+        "https://healthgpt-2.onrender.com/report/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       const { text } = await uploadRes.json();
 
       // 2. Analyze extracted text
-      const analyzeRes = await fetch("https://healthgpt-2.onrender.com/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
+      const analyzeRes = await fetch(
+        "https://healthgpt-2.onrender.com/analyze",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        }
+      );
       const analyzed = await analyzeRes.json();
       setAnalyzedData(analyzed);
 
@@ -96,6 +103,57 @@ export default function ReportPage() {
       await saveReportToSupabase(analyzed);
 
       // 4. ?Send to Gmail - Optional, can be removed if causing delay
+      // await fetch("https://healthgpt-2.onrender.com/send-email", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     email: user?.emailAddresses[0]?.emailAddress,
+      //     report_data: analyzed,
+      //   }),
+      // });
+
+      // alert("Report analyzed and sent to your email!");
+    } catch (error) {
+      alert("Error analyzing report");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleSend = async () => {
+    if (!file || !user) return;
+
+    setIsLoading(true);
+    try {
+      // Upload and analyze only if not already done
+      let analyzed = analyzedData;
+      if (!analyzedData) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const uploadRes = await fetch(
+          "https://healthgpt-2.onrender.com/report/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const { text } = await uploadRes.json();
+
+        const analyzeRes = await fetch(
+          "https://healthgpt-2.onrender.com/analyze",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text }),
+          }
+        );
+        analyzed = await analyzeRes.json();
+        setAnalyzedData(analyzed);
+        await saveReportToSupabase(analyzed);
+      }
+
+      // Send to email
       await fetch("https://healthgpt-2.onrender.com/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,9 +163,9 @@ export default function ReportPage() {
         }),
       });
 
-      // alert("Report analyzed and sent to your email!");
+      alert("Report sent to your email!");
     } catch (error) {
-      alert("Error analyzing report");
+      alert("Error sending report to email");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -141,15 +199,18 @@ export default function ReportPage() {
         warnings: analyzedData.warnings || [],
       };
 
-      const response = await fetch("https://healthgpt-2.onrender.com/chat/report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: currentInput,
-          report_data: essentialReportData,
-          chat_history: recentMessages,
-        }),
-      });
+      const response = await fetch(
+        "https://healthgpt-2.onrender.com/chat/report",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: currentInput,
+            report_data: essentialReportData,
+            chat_history: recentMessages,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
@@ -178,38 +239,49 @@ export default function ReportPage() {
   };
 
   return (
-    <div className="flex flex-row gap-6 w-full h-screen p-4">
+    <div className="flex flex-row gap-[16] w-full h-[900] overflow-hidden p-4 bg-gradient-to-br from-black to-[#200257]">
       <style>{styles}</style>
       {/* Left Panel - Upload */}
-      <div className="w-1/2">
-        <Card className="shadow-md bg-white dark:bg-gray-800 h-full overflow-hidden">
+      <div className="w-1/2 ml-[10]">
+        <Card className="shadow-md bg-white dark:bg-gray-800 h-[900] overflow-hidden">
           <CardContent className=" p-6 flex flex-col  h-full">
-            <h1 className="text-xl font-bold text-center mb-6">
+            <h1 className="text-[40px] font-bold text-center mb-6">
               Upload Medical Report
             </h1>
 
             {/* Upload Section */}
-            <div className="mb-6 ">
+            <div className="mb-[6] flex">
               <Input
                 type="file"
                 accept=".pdf,.png,.jpg,.jpeg"
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                className="mb-4 bg-[white]"
+                className="mb-4 bg-[white] w-[500] "
               />
               {file && (
                 <p className="text-sm text-gray-500 mb-2">
                   Selected: {file.name}
                 </p>
               )}
+
               <Button
+                variant="default"
                 onClick={handleAnalyze}
                 disabled={!file || isLoading}
-                className="w-full"
+                className="w-[300] mb-4"
               >
                 {isLoading ? "Analyzing..." : "Analyze Report"}
               </Button>
             </div>
-
+            <Button
+              onClick={handleSend}
+              disabled={!file || isLoading}
+              className="w-full h-[30] mb-[6]"
+            >
+              send to email
+            </Button>
+            <div className="flex gap-2">
+              <DownloadButton reportData={analyzedData} />
+            </div>
             {/* Results Section */}
             {analyzedData && (
               <div className="space-y-4 flex-1 overflow-y-auto">
@@ -240,10 +312,6 @@ export default function ReportPage() {
                       </div>
                     ))}
                 </div>
-
-                <div className="flex gap-2">
-                  <DownloadButton reportData={analyzedData} />
-                </div>
               </div>
             )}
           </CardContent>
@@ -251,15 +319,17 @@ export default function ReportPage() {
       </div>
 
       {/* Right Panel - Chat */}
-      <div className="w-1/2">
-        <Card className="shadow-md bg-white dark:bg-gray-800 h-full">
+      <div className="w-1/2 ">
+        <Card className="shadow-md bg-white dark:bg-gray-800 h-[900] overflow-hidden">
           <CardContent className="p-6 flex flex-col h-full">
-            <h2 className="text-xl font-bold mb-4">Chat with HealthGPT</h2>
+            <h2 className="text-[40px] text-center font-bold mb-4">
+              Chat with HealthGPT !
+            </h2>
 
             {/* Chat Messages */}
             <div
               ref={chatContainerRef}
-              className="flex-1 overflow-y-auto mb-4 p-2 border border-gray-100 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900"
+              className="flex-1 overflow-y-auto mb-4 mr-[10] p-2 border border-gray-100 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900"
             >
               {messages.length > 0 ? (
                 <div className="space-y-4 py-2">
@@ -285,8 +355,8 @@ export default function ReportPage() {
                   ))}
                 </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-gray-400 p-6 text-center">
-                  <div className="w-16 h-16 mb-4 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                <div className="h-[700] flex flex-col items-center justify-center text-gray-400 p-6 text-center">
+                  <div className="w-16 h-[16] mb-4 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -309,7 +379,7 @@ export default function ReportPage() {
             </div>
 
             {/* Chat Input */}
-            <form onSubmit={handleSendMessage} className="flex gap-2 mt-2">
+            <form onSubmit={handleSendMessage} className="flex gap-2 mt-[2]">
               <Input
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
@@ -320,50 +390,33 @@ export default function ReportPage() {
               <Button
                 type="submit"
                 disabled={!analyzedData || !userInput.trim() || isSending}
-                className="bg-blue-500 hover:bg-blue-600 px-4"
+                className="bg-blue-500 hover:bg-blue-600 px-4 flex items-center gap-1"
               >
                 {isSending ? (
-                  <div className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    <span>Sending</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <span>Send</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="ml-1 h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                  <svg
+                    className="animate-spin h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
                       stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                      />
-                    </svg>
-                  </div>
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                  </>
                 )}
               </Button>
             </form>

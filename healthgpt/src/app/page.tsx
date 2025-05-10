@@ -1,45 +1,49 @@
 "use client";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button"; // optional, you can replace with a simple <button>
 import { useUser } from "@clerk/nextjs";
+import "./HomePage.css"; // ensure this CSS file is in the same folder
+import { Bot, Stethoscope } from "lucide-react";
 
 export default function HomePage() {
   const { user, isLoaded } = useUser();
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-muted flex flex-col items-center justify-center px-4">
-      <div className="bg-black/20 backdrop-blur-sm p-10 rounded-xl w-96 h-96 shadow-2xl flex flex-col">
-        <div className="flex justify-center mb-6">
-          <div className="text-primary text-4xl font-bold flex items-center gap-2">
-            <span className="text-purple-500">🩺</span> HealthGPT
+    <main className="main-container ">
+      <div className="card-container ">
+        {/* Left Panel */}
+        <div className="card-left">
+          <div className="brand flex justify-center items-center my-4">
+            <Stethoscope className="text-purple-500 text-2xl" />
+            <span className="title flex justify-center items-center text-[30px] my-4">
+              HealthGPT{" "}
+            </span>
           </div>
-        </div>
+          <div className="flex justify-center items-center my-4">
+            <Bot size={50} />
+          </div>
 
-        <div className="text-center mb-auto">
-          <p className="text-gray-300 text-sm">
-            Your AI companion to understand medical reports, symptoms, and
-            health trends — explained in simple terms.
+          <p className="description">
+            Your AI health companion. Simple explanations for your reports and
+            symptoms.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 w-full">
-          <Link href="/report" className="w-full">
-            <Button className="w-full h-16" variant="default">
-              Upload Report
-            </Button>
-          </Link>
-          <Link href="/chat" className="w-full">
-            <Button variant="outline" className="w-full h-16">
-              Symptom Checker
-            </Button>
-          </Link>
-        </div>
-
-        <div className="mt-6 text-center">
-          <p className="text-xs text-gray-400">
-            Trusted by users. Designed for peace of mind.
-          </p>
+        {/* Right Panel */}
+        <div className="card-right">
+          <div className="right-header ">
+            <p className="subheading text-[40x]">Get Started</p>
+            <h3 className="heading text-[40x]">What do you want to do?</h3>
+          </div>
+          <div className="button-group">
+            <Link href="/report" className="button-link">
+              <button className="primary-btn">Upload</button>
+            </Link>
+            <Link href="/chat" className="button-link">
+              <button className="secondary-btn">Chat</button>
+            </Link>
+          </div>
+          {/* <div className="footer-note">Trusted. Simple. Secure.</div> */}
         </div>
       </div>
     </main>

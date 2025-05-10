@@ -23,7 +23,9 @@ export default function RootLayout({
           <html lang="en">
             <body className="font-sans">
               <Header />
-              <main className="h-screen">{children}</main>
+              <main className="h-[895] bg-gradient-to-br from-black to-[#200257]">
+                {children}
+              </main>
               {/* <Footer />sa */}
             </body>
           </html>

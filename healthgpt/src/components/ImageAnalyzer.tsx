@@ -4,6 +4,7 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 // import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function ImageAnalyzer() {
@@ -45,10 +46,13 @@ export default function ImageAnalyzer() {
 
     try {
       console.log("Sending request to analyze image...");
-      const res = await fetch("https://healthgpt-2.onrender.com/vision/analyze", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch(
+        "https://healthgpt-2.onrender.com/vision/analyze",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       console.log("Response status:", res.status);
 
@@ -84,14 +88,19 @@ export default function ImageAnalyzer() {
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto bg-white dark:bg-gray-900 rounded-md shadow-md space-y-4">
+    <div className="p-6 max-w-xl mx-auto bg-gradient-to-br from-black to-[#200257] rounded-md shadow-md space-y-4">
       <h2 className="text-lg font-bold">
         🧠 Analyze Medical Image (Gemini Pro Vision)
       </h2>
 
       <div className="space-y-2">
         <label className="block text-sm font-medium">Upload Image</label>
-        <Input type="file" accept="image/*" onChange={handleFileChange} />
+        <Input
+          className="mt-[10]  h-[40] w-full"
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
         {imageFile && (
           <p className="text-xs text-gray-500">
             Selected: {imageFile.name} ({(imageFile.size / 1024).toFixed(1)} KB)
@@ -115,9 +124,10 @@ export default function ImageAnalyzer() {
       <Button
         onClick={handleAnalyze}
         disabled={!imageFile || loading}
-        className="w-full"
+        className="w-full h-[40]"
       >
         {loading ? "Analyzing... Please wait" : "Analyze Image"}
+        <Search size={16} />
       </Button>
 
       {loading && (
