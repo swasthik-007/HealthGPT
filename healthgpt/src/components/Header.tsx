@@ -40,7 +40,7 @@ export default function Header() {
         <div className="flex items-center">
           <Link href="/" className="flex items-center gap-3 hover-scale">
             <Stethoscope className="text-purple-500 text-2xl" />
-            <span className="text-white text-xl font-bold tracking-wide">
+            <span className="text-white text-[30px] font-bold tracking-wide">
               HealthGPT
             </span>
           </Link>
